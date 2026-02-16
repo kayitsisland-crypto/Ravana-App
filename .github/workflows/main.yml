@@ -21,14 +21,23 @@ jobs:
       - name: Install System Dependencies
         run: |
           sudo apt update
-          sudo apt install -y git zip unzip python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
+          sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
           pip install --user --upgrade Cython==0.29.33 buildozer
 
-      - name: Build with Buildozer
+      - name: Pre-accept Android SDK Licenses
+        run: |
+          # SDK එක ඉන්ස්ටෝල් වෙන්න කලින්ම අපි Licenses ටික බලෙන්ම පිළිගන්නවා
+          mkdir -p $HOME/.android
+          touch $HOME/.android/repositories.cfg
+          # Buildozer ට අවශ්‍ය පරිසරය ලෑස්ති කරනවා
+          export PATH=$PATH:$HOME/.local/bin
+          buildozer android debug --version || true
+
+      - name: Final Build Attempt
         run: |
           export PATH=$PATH:$HOME/.local/bin
-          # මෙතන 'yes y' පේළි දෙකක් දැම්මාම Licenses ඔක්කොම බලෙන්ම පිළිගන්නවා
-          yes y | buildozer android debug
+          # 'yes' විධානය මෙහෙම පාවිච්චි කරමු
+          printf "y\ny\ny\ny\ny\ny\ny\ny\n" | buildozer android debug
         continue-on-error: false
 
       - name: Upload APK
