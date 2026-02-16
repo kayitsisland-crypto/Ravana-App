@@ -7,38 +7,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
+      - name: Build with Buildozer
+        uses: ArtemSerebrenninkov/buildozer-action@v1
         with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
-
-      - name: Install System Dependencies
-        run: |
-          sudo apt update
-          sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
-          pip install --user --upgrade Cython==0.29.33 buildozer
-
-      - name: Pre-accept Android SDK Licenses
-        run: |
-          # SDK එක ඉන්ස්ටෝල් වෙන්න කලින්ම අපි Licenses ටික බලෙන්ම පිළිගන්නවා
-          mkdir -p $HOME/.android
-          touch $HOME/.android/repositories.cfg
-          # Buildozer ට අවශ්‍ය පරිසරය ලෑස්ති කරනවා
-          export PATH=$PATH:$HOME/.local/bin
-          buildozer android debug --version || true
-
-      - name: Final Build Attempt
-        run: |
-          export PATH=$PATH:$HOME/.local/bin
-          # 'yes' විධානය මෙහෙම පාවිච්චි කරමු
-          printf "y\ny\ny\ny\ny\ny\ny\ny\n" | buildozer android debug
-        continue-on-error: false
+          command: buildozer android debug
+          buildozer_version: master
+          repository_root: .
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
