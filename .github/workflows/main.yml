@@ -5,17 +5,17 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4 # අලුත්ම version එක
+      - uses: actions/checkout@v4
 
       - name: Build with Buildozer
-        uses: ArtemSerebrenninkov/buildozer-action@v1.6.1 # ස්ථාවර version එකක්
+        # අපි මෙතනට වඩාත් ස්ථාවර නිල Action එකක් පාවිච්චි කරමු
+        uses: jreleaser/buildozer-action@v1
         with:
-          buildozer_version: master
           command: buildozer android debug
           repository_root: .
 
       - name: Upload APK
-        uses: actions/upload-artifact@v4 # මෙන්න මේක තමයි v4 වෙන්න ඕනේ
+        uses: actions/upload-artifact@v4
         with:
           name: package
           path: bin/*.apk
